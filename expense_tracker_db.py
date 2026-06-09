@@ -62,7 +62,10 @@ def delete():
         del_num = int(input("Enter the expense id you want to delete: "))
         cursor.execute("DELETE FROM expenses WHERE id = ?",(del_num,))
         conn.commit()
-        print(f"Successfully deleted expense {del_num}")
+        if cursor.rowcount>0:
+            print(f"Successfully deleted expense {del_num}")
+        else:
+            print("Expense ID not found")
         choice = input("Do you want to delete more expenses?(yes/no): ")
         if choice.lower() == "no":
             break
@@ -73,16 +76,54 @@ def delete():
 
 
 def edit():
-    
-    view()
-    edit_num = int(input("Enter the expense id you want to edit"))
-    new_category = input("Category: ")
-    new_amount = float(input("amount: "))
-    new_description = input("description: ")
+    while True:
+        view()
 
-    cursor.execute(" UPDATE expenses SET category = ?,amount = ?, description =?  WHERE id = ?", (new_category,new_amount,new_description,edit_num))
-    conn.commit()
+        while True:
+            try:
+                edit_num = int(input("Enter the expense id you want to edit: "))
+                break
+            except ValueError:
+                print("Enter a valid integer")
 
+        new_category = input("Category: ")
+
+        while True:
+            try:
+                new_amount = float(input("Amount: "))
+                break
+            except ValueError:
+                print("Enter a valid amount")
+
+        new_description = input("Description: ")
+
+        cursor.execute(
+            """
+            UPDATE expenses
+            SET category = ?, amount = ?, description = ?
+            WHERE id = ?
+            """,
+            (new_category, new_amount, new_description, edit_num)
+        )
+
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            print("Expense ID not found")
+        else:
+            print(f"Updated expense {edit_num} successfully")
+
+        while True:
+            choice = input("Do you want to update more expenses? (yes/no): ")
+
+            if choice.lower() == "yes":
+                break 
+
+            elif choice.lower() == "no":
+                return  
+
+            else:
+                print("Enter either 'yes' or 'no'")
 
 print("Choose what you want to perform:")
 while True:
