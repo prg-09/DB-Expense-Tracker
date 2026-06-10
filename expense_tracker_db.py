@@ -32,6 +32,13 @@ def add():
         description = input("Enter a description for your expense: ")
         expense = (category, amount, description)
         
+        #insert in the table
+        cursor.execute("""
+                        INSERT INTO expenses(category,amount,description)
+                        VALUES(?,?,?)
+                        """,expense)
+        conn.commit()
+        
         choice = input("Do you want to add more expense?(yes/no)")
         if choice.lower() == "no":
             break
@@ -40,12 +47,7 @@ def add():
         else:
             print("Enter either 'yes' or 'no'")
 
-    #insert in the table
-    cursor.execute("""
-                    INSERT INTO expenses(category,amount,description)
-                    VALUES(?,?,?)
-                    """,expense)
-    conn.commit()
+    
     
 
 def view():
@@ -67,7 +69,7 @@ def delete():
                 print("Please enter an integer as an expense id")
                 
         cursor.execute("SELECT * FROM expenses WHERE id = ?",(del_num,))
-        conn.commit()
+       
         del_expense = cursor.fetchone()
         if not del_expense:
             print("Expense ID not found")
@@ -98,7 +100,7 @@ def edit():
                 print("Enter a valid integer")
 
         cursor.execute("SELECT * FROM expenses WHERE id = ? ", (edit_num,))
-        conn.commit()
+      
         edit_expense = cursor.fetchone()
         if not edit_expense:
             print("Expense ID not found")
@@ -126,7 +128,7 @@ def edit():
 
         conn.commit()
 
-        print("Updated expense {expense_num} successsfully")
+        print(f"Updated expense {edit_num} successsfully")
         while True:
             choice = input("Do you want to update more expenses? (yes/no): ")
 
