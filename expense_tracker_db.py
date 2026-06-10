@@ -1,4 +1,4 @@
-import os 
+
 import sqlite3
 
 with sqlite3.connect("expenses.db") as conn:
@@ -52,9 +52,13 @@ def add():
 
 def view():
     print("Your expenses are:")
-    db_expenses = cursor.execute("SELECT * FROM expenses")
+    cursor.execute("SELECT * FROM expenses")
+    db_expenses = cursor.fetchall()
+    if not db_expenses:
+        print("No expenses found.")
+        return
     for i in db_expenses:
-        print (i)
+        print (f"\nID: {i[0]}\nCategory: {i[1]}\nAmount:Rs.{i[2]}\nDescription: {i[3]}\n")
 
 
 def delete():
@@ -73,7 +77,7 @@ def delete():
         del_expense = cursor.fetchone()
         if not del_expense:
             print("Expense ID not found")
-            return
+            continue
         cursor.execute("DELETE FROM expenses WHERE id = ?",(del_num,))
         conn.commit()
         
@@ -104,7 +108,7 @@ def edit():
         edit_expense = cursor.fetchone()
         if not edit_expense:
             print("Expense ID not found")
-            return
+            continue
     
         new_category = input("Category: ")
 
@@ -128,7 +132,7 @@ def edit():
 
         conn.commit()
 
-        print(f"Updated expense {edit_num} successsfully")
+        print(f"Updated expense {edit_num} successfully")
         while True:
             choice = input("Do you want to update more expenses? (yes/no): ")
 
