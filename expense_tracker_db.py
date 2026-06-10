@@ -60,12 +60,18 @@ def delete():
     while True:
         view()
         del_num = int(input("Enter the expense id you want to delete: "))
+        
+        cursor.execute("SELECT * FROM expenses WHERE id = ?",(del_num,))
+        conn.commit()
+        del_expense = cursor.fetchone()
+        if not del_expense:
+            print("Expense ID not found")
+        
         cursor.execute("DELETE FROM expenses WHERE id = ?",(del_num,))
         conn.commit()
-        if cursor.rowcount>0:
-            print(f"Successfully deleted expense {del_num}")
-        else:
-            print("Expense ID not found")
+        
+        print("Deleted expense {del_num} successfully")
+        
         choice = input("Do you want to delete more expenses?(yes/no): ")
         if choice.lower() == "no":
             break
@@ -86,6 +92,13 @@ def edit():
             except ValueError:
                 print("Enter a valid integer")
 
+        cursor.execute("SELECT * FROM expenses WHERE id = ? ", (edit_num,))
+        conn.commit()
+        edit_expense = cursor.fetchone()
+        if not edit_expense:
+            print("Expense ID not found")
+            return
+    
         new_category = input("Category: ")
 
         while True:
@@ -108,11 +121,7 @@ def edit():
 
         conn.commit()
 
-        if cursor.rowcount == 0:
-            print("Expense ID not found")
-        else:
-            print(f"Updated expense {edit_num} successfully")
-
+        print("Updated expense {expense_num} successsfully")
         while True:
             choice = input("Do you want to update more expenses? (yes/no): ")
 
