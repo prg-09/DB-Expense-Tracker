@@ -1,6 +1,6 @@
 
 import sqlite3
-
+from datetime import date
 with sqlite3.connect("expenses.db") as conn:
     cursor = conn.cursor()
 
@@ -22,7 +22,9 @@ conn.commit()
 def add():
     print("Add your expenses here")
     while True:
-        date = input("Enter today's date: ")
+
+        date_today = date.today().isoformat()
+        
         category = input("Enter the category of your expense: ")
         while True:
             try:
@@ -31,7 +33,7 @@ def add():
             except ValueError:
                 print("Enter valid amount:")
         description = input("Enter a description for your expense: ")
-        expense = (date,category, amount, description)
+        expense = (date_today,category, amount, description)
         
         #insert in the table
         cursor.execute("""
@@ -111,7 +113,7 @@ def edit():
             print("Expense ID not found")
             continue
         
-        new_date = input("Date: ")
+        new_date = date.today().isoformat()
         new_category = input("Category: ")
 
         while True:
