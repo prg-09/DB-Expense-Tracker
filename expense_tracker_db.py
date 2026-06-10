@@ -10,7 +10,7 @@ cursor.execute(
     CREATE TABLE IF NOT EXISTS expenses(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         category TEXT NOT NULL,
-        amount FLOAT NOT NULL,
+        amount REAL NOT NULL,
         description TEXT 
     ) 
     """
