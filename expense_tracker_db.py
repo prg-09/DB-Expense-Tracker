@@ -9,8 +9,9 @@ cursor.execute(
     """
     CREATE TABLE IF NOT EXISTS expenses(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT NOT NULL,
         category TEXT NOT NULL,
-        amount REAL NOT NULL,
+        amount INTEGER NOT NULL,
         description TEXT 
     ) 
     """
@@ -21,21 +22,21 @@ conn.commit()
 def add():
     print("Add your expenses here")
     while True:
-        
+        date = input("Enter today's date: ")
         category = input("Enter the category of your expense: ")
         while True:
             try:
-                amount = float(input("Enter the amount of your expense: "))
+                amount = int(input("Enter the amount of your expense: "))
                 break
             except ValueError:
                 print("Enter valid amount:")
         description = input("Enter a description for your expense: ")
-        expense = (category, amount, description)
+        expense = (date,category, amount, description)
         
         #insert in the table
         cursor.execute("""
-                        INSERT INTO expenses(category,amount,description)
-                        VALUES(?,?,?)
+                        INSERT INTO expenses(date,category,amount,description)
+                        VALUES(?,?,?,?)
                         """,expense)
         conn.commit()
         
@@ -58,7 +59,7 @@ def view():
         print("No expenses found.")
         return
     for i in db_expenses:
-        print (f"\nID: {i[0]}\nCategory: {i[1]}\nAmount:Rs.{i[2]}\nDescription: {i[3]}\n")
+        print (f"\nID: {i[0]}\nDate:{i[1]}\nCategory: {i[2]}\nAmount:Rs.{i[3]}\nDescription: {i[4]}\n")
 
 
 def delete():
@@ -109,7 +110,8 @@ def edit():
         if not edit_expense:
             print("Expense ID not found")
             continue
-    
+        
+        new_date = input("Date: ")
         new_category = input("Category: ")
 
         while True:
@@ -124,10 +126,10 @@ def edit():
         cursor.execute(
             """
             UPDATE expenses
-            SET category = ?, amount = ?, description = ?
+            SET date = ?, category = ?, amount = ?, description = ?
             WHERE id = ?
             """,
-            (new_category, new_amount, new_description, edit_num)
+            (new_date,new_category, new_amount, new_description, edit_num)
         )
 
         conn.commit()
