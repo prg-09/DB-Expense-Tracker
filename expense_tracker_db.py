@@ -59,18 +59,23 @@ def delete():
     
     while True:
         view()
-        del_num = int(input("Enter the expense id you want to delete: "))
-        
+        while True:
+            try:
+                del_num = int(input("Enter the expense id you want to delete: "))
+                break
+            except ValueError:
+                print("Please enter an integer as an expense id")
+                
         cursor.execute("SELECT * FROM expenses WHERE id = ?",(del_num,))
         conn.commit()
         del_expense = cursor.fetchone()
         if not del_expense:
             print("Expense ID not found")
-        
+            return
         cursor.execute("DELETE FROM expenses WHERE id = ?",(del_num,))
         conn.commit()
         
-        print("Deleted expense {del_num} successfully")
+        print(f"Deleted expense {del_num} successfully")
         
         choice = input("Do you want to delete more expenses?(yes/no): ")
         if choice.lower() == "no":
